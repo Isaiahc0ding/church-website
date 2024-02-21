@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <div class="container">
+        <form id="loginForm" class="form" action="/login" method="post">
+            <h2>Login</h2>
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" name="username" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+
+        <!-- Container for displaying messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Script to handle redirect after successful login -->
+        <script>
+            document.getElementById('loginForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+
+                // Submit the form using AJAX
+                fetch('/login', {
+                    method: 'POST',
+                    body: new FormData(this),
+                })
+                .then(response => response.json()) // Parse the response as JSON
+                .then(data => {
+                    if (data.success) {
+                        // Display a message and a link on the login successful page
+                        document.getElementById('messageContainer').innerHTML = `
+                            <h1>${data.message}</h1>
+                            <p>Go to <a href="${data.redirectUrl}">Homepage</a></p>
+                        `;
+                    } else {
+                        // Handle other responses (e.g., error messages)
+                        console.error('Login failed:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during login:', error);
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
